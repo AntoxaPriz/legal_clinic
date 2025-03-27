@@ -15,10 +15,10 @@
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
         <label for="email">Электронная почта:</label>
-        <input type="email" id="email" name="email" required><br>
+        <input type="email" id="email" name="email" placeholder="example@domain.com" required><br>
 
         <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required><br>
+        <input type="password" id="password" name="password" placeholder="Введите пароль" required><br>
 
         <button type="submit">Войти</button>
     </form>
