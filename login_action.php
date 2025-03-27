@@ -1,11 +1,13 @@
 <?php
-// Проверка CSRF токена
 session_start();
+
+// Проверка CSRF токена
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'])) {
         die('Ошибка CSRF');
     }
 
+    // Получение данных из формы
     $email = $_POST['email'];
     $password = $_POST['password'];
 
@@ -27,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['name'] = $user['name'];
         header("Location: dashboard/index.php"); // Перенаправление в личный кабинет
+        exit;
     } else {
         echo "Неверный логин или пароль!";
     }
