@@ -15,20 +15,19 @@
         <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
         <label for="name">ФИО:</label>
-        <input type="text" id="name" name="name" required><br>
+        <input type="text" id="name" name="name" placeholder="Введите ваше ФИО" required><br>
 
         <label for="email">Электронная почта:</label>
-        <input type="email" id="email" name="email" required><br>
+        <input type="email" id="email" name="email" placeholder="example@domain.com" required><br>
 
         <label for="password">Пароль:</label>
-        <input type="password" id="password" name="password" required><br>
+        <input type="password" id="password" name="password" placeholder="Введите пароль" required><br>
 
         <label for="confirm_password">Подтверждение пароля:</label>
-        <input type="password" id="confirm_password" name="confirm_password" required><br>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="Подтвердите пароль" required><br>
 
         <button type="submit">Зарегистрироваться</button>
     </form>
 </main>
 
 <?php include 'includes/footer.php'; ?>
-
