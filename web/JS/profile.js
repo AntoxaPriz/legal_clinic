@@ -15,7 +15,7 @@ export async function loadProfile() {
         const form = document.getElementById('updateProfileForm');
         if (form) {
             form.username.value = data.username;
-            form.password.value = ''; // Пароль остаётся пустым для безопасности
+            form.password.value = '';
         }
     } catch (error) {
         console.error('Profile load error:', error);
@@ -34,12 +34,14 @@ export async function updateProfile(e) {
 
         const data = await api.request('profile.php', 'PUT', {
             username: form.username.value.trim(),
-            password: form.password.value.trim() || null
+            password: form.password.value.trim() || null,
+            oldPassword: form.oldPassword.value.trim()
         });
 
         if (data.success) {
             await loadProfile();
             form.password.value = '';
+            form.oldPassword.value = ''; // Очистка старого пароля
             alert(data.message || 'Профиль успешно обновлён');
         }
     } catch (error) {
