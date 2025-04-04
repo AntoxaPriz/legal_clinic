@@ -62,6 +62,11 @@ input, select {
     margin: 5px 0;
     width: 200px;
 }
+textarea {
+    height: 100px;
+    resize: vertical;
+    min-height: 60px;
+}
 /*Текст*/
 p {
     line-height: 1.5;
@@ -74,5 +79,7 @@ p {
     table {
         font-size: 12px;
     }
-    input, select { width: 100%; }
+    input, select,textarea {
+        width: 100%;
+    }
 }
