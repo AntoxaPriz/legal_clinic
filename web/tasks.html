@@ -17,8 +17,11 @@
                 <input type="text" class="form-control" id="taskDescription" name="description" required>
             </div>
             <div class="col-md-3 mb-3">
-                <label for="taskResponsible" class="form-label">Ответственный (ID)</label>
-                <input type="number" class="form-control" id="taskResponsible" name="responsible_id">
+                <label for="taskResponsible" class="form-label">Ответственный</label>
+                <select class="form-control" id="taskResponsible" name="responsible_id">
+                    <option value="">Не назначен</option>
+                    <!-- Опции будут добавлены через JS -->
+                </select>
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Добавить задачу</button>
@@ -35,7 +38,6 @@
         </thead>
         <tbody></tbody>
     </table>
-    <!-- Модальное окно для редактирования -->
     <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -59,8 +61,11 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="editTaskResponsible" class="form-label">Ответственный (ID)</label>
-                            <input type="number" class="form-control" id="editTaskResponsible" name="responsible_id">
+                            <label for="editTaskResponsible" class="form-label">Ответственный</label>
+                            <select class="form-control" id="editTaskResponsible" name="responsible_id">
+                                <option value="">Не назначен</option>
+                                <!-- Опции будут добавлены через JS -->
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
