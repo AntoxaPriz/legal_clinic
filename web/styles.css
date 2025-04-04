@@ -1,20 +1,78 @@
-body { font-family: Arial, sans-serif; margin: 20px; background: #fff; }
-nav ul { list-style: none; display: flex; gap: 15px; flex-wrap: wrap; padding: 0; }
-nav a { text-decoration: none; color: #007BFF; }
-nav a:hover { text-decoration: underline; }
-.breadcrumbs { margin: 10px 0; color: #666; }
-h1 { font-size: 24px; margin: 20px 0; }
-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-th { background: #f2f2f2; }
-button { background: #007BFF; color: #fff; padding: 8px 16px; border: none; cursor: pointer; }
-button:hover { background: #0056b3; }
-input, select { padding: 8px; margin: 5px 0; width: 200px; }
-p { line-height: 1.5; }
+/* Основные стили */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #fff;
+}
+/*Навигация*/
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    padding: 0;
+}
+nav a {
+    text-decoration: none;
+    color: #007BFF;
+}
+nav a:hover {
+    text-decoration: underline;
+}
+/*Хлебные крошки*/
+.breadcrumbs {
+    margin: 10px 0;
+    color: #666;
+}
+/*Заголовки*/
+h1 {
+    font-size: 24px;
+    margin: 20px 0;
+}
+/*Таблицы*/
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background: #f2f2f2;
+}
+/*Кнопки и формы*/
+button {
+    background: #007BFF;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+input, select {
+    padding: 8px;
+    margin: 5px 0;
+    width: 200px;
+}
+/*Текст*/
+p {
+    line-height: 1.5;
+}
+/*Адаптивность*/
 @media (max-width: 768px) {
-    nav ul { flex-direction: column; }
-    table { font-size: 12px; }
+    nav ul {
+        flex-direction: column;
+    }
+    table {
+        font-size: 12px;
+    }
     input, select { width: 100%; }
 }
-body { font-family: Arial, sans-serif; margin: 20px; background: #fff; }
-h1 { font-size: 24px; margin: 20px 0; }
