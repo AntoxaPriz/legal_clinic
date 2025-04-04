@@ -64,6 +64,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode(['success' => false, 'message' => 'Клиент не найден или не принадлежит вам']);
     }
     $stmt->close();
+} elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+    $id = $_GET['id'] ?? '';
+    if (empty($id)) {
+        die(json_encode(['success' => false, 'message' => 'ID клиента обязателен']));
+    }
+
+    $input = json_decode(file_get_contents('php://input'), true);
+    $name = $input['name'] ?? '';
+    $email = $input['email'] ?? null;
+    $phone = $input['phone'] ?? null;
+
+    if (empty($name)) {
+        die(json_encode(['success' => false, 'message' => 'Имя клиента обязательно']));
+    }
+
+    $stmt = $conn->prepare("UPDATE clients SET name = ?, email = ?, phone = ? WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("sssii", $name, $email, $phone, $id, $_SESSION['user_id']);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['success' => true, 'message' => 'Клиент обновлён']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Клиент не найден или не принадлежит вам']);
+    }
+    $stmt->close();
 }
 $conn->close();
 ?>
