@@ -10,16 +10,71 @@
 <body>
 <div class="container mt-5">
     <h2>Список задач</h2>
+    <form id="addTaskForm" class="mb-4">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="taskDescription" class="form-label">Описание</label>
+                <input type="text" class="form-control" id="taskDescription" name="description" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="taskResponsible" class="form-label">Ответственный (ID)</label>
+                <input type="number" class="form-control" id="taskResponsible" name="responsible_id">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить задачу</button>
+    </form>
     <table class="table" id="tasksList">
         <thead>
-        <tr><th>ID</th><th>Описание</th><th>Статус</th><th>Ответственный</th></tr>
+        <tr>
+            <th>ID</th>
+            <th>Описание</th>
+            <th>Статус</th>
+            <th>Ответственный</th>
+            <th>Действия</th>
+        </tr>
         </thead>
         <tbody></tbody>
     </table>
+    <!-- Модальное окно для редактирования -->
+    <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTaskModalLabel">Редактировать задачу</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editTaskForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="mb-3">
+                            <label for="editTaskDescription" class="form-label">Описание</label>
+                            <input type="text" class="form-control" id="editTaskDescription" name="description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTaskStatus" class="form-label">Статус</label>
+                            <select class="form-control" id="editTaskStatus" name="status">
+                                <option value="open">Открыта</option>
+                                <option value="in_progress">В процессе</option>
+                                <option value="closed">Закрыта</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editTaskResponsible" class="form-label">Ответственный (ID)</label>
+                            <input type="number" class="form-control" id="editTaskResponsible" name="responsible_id">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/core.js" type="module"></script>
 <script src="js/auth.js" type="module"></script>
-<script src="js/documents.js" type="module"></script>
 <script src="js/tasks.js" type="module"></script>
 <script src="js/main.js" type="module"></script>
 </body>
