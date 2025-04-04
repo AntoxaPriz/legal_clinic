@@ -28,20 +28,26 @@ export async function updateProfile(e) {
     const form = e.target;
     const button = form.querySelector('button[type="submit"]');
 
+    const newPassword = form.password.value.trim();
+    if (newPassword && newPassword.length < 6) {
+        alert('Новый пароль должен содержать минимум 6 символов');
+        return;
+    }
+
     try {
         button.disabled = true;
         button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Сохранение...';
 
         const data = await api.request('profile.php', 'PUT', {
             username: form.username.value.trim(),
-            password: form.password.value.trim() || null,
+            password: newPassword || null,
             oldPassword: form.oldPassword.value.trim()
         });
 
         if (data.success) {
             await loadProfile();
             form.password.value = '';
-            form.oldPassword.value = ''; // Очистка старого пароля
+            form.oldPassword.value = '';
             alert(data.message || 'Профиль успешно обновлён');
         }
     } catch (error) {
@@ -50,5 +56,17 @@ export async function updateProfile(e) {
     } finally {
         button.disabled = false;
         button.textContent = 'Сохранить';
+    }
+}
+
+export async function logout() {
+    try {
+        const data = await api.request('auth.php?logout=1', 'POST');
+        if (data.success) {
+            window.location.href = 'index.html'; // Перенаправление на главную страницу
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Ошибка при выходе из системы');
     }
 }
