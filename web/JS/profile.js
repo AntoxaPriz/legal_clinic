@@ -11,6 +11,12 @@ export async function loadProfile() {
       <p><strong>Имя пользователя:</strong> ${data.username}</p>
       <p><strong>Роль:</strong> ${data.role}</p>
     `;
+
+        const form = document.getElementById('updateProfileForm');
+        if (form) {
+            form.username.value = data.username;
+            form.password.value = ''; // Пароль остаётся пустым для безопасности
+        }
     } catch (error) {
         console.error('Profile load error:', error);
         alert('Ошибка загрузки профиля');
@@ -33,7 +39,7 @@ export async function updateProfile(e) {
 
         if (data.success) {
             await loadProfile();
-            form.password.value = ''; // Очистка поля пароля
+            form.password.value = '';
             alert(data.message || 'Профиль успешно обновлён');
         }
     } catch (error) {
