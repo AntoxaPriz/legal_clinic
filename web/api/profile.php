@@ -29,9 +29,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $input = json_decode(file_get_contents('php://input'), true);
     $username = $input['username'] ?? '';
     $password = $input['password'] ?? null;
+    $oldPassword = $input['oldPassword'] ?? '';
 
     if (empty($username)) {
         die(json_encode(['success' => false, 'message' => 'Имя пользователя обязательно']));
+    }
+    if (empty($oldPassword)) {
+        die(json_encode(['success' => false, 'message' => 'Текущий пароль обязателен']));
+    }
+
+    // Проверка старого пароля
+    $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
+    $stmt->bind_param("i", $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $stmt->close();
+
+    if (!password_verify($oldPassword, $user['password'])) {
+        die(json_encode(['success' => false, 'message' => 'Неверный текущий пароль']));
     }
 
     $query = "UPDATE users SET username = ?";
