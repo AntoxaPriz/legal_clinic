@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора - Legal Clinic CRM</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="profile.html">Личный кабинет</a></li>
+        <li><a href="history.html">История</a></li>
+        <li><a href="tasks.html">Задачи</a></li>
+        <li><a href="reports.html">Отчеты</a></li>
+        <li><a href="admin.html">Панель администратора</a></li>
+        <li><a href="settings.html">Настройки</a></li>
+        <li><a href="register.html">Регистрация</a></li>
+        <li><a href="contact.html">Обратная связь</a></li>
+        <li><a href="help.html">Справка</a></li>
+        <li><a href="dashboard.html">Дашборд</a></li>
+        <li><a href="logout.php">Выход</a></li>
+    </ul>
+</nav>
+<div class="breadcrumbs"><a href="index.html">Главная</a> > <span>Панель администратора</span></div>
+<h1>Панель администратора</h1>
+<table id="usersTable">
+    <thead><tr><th>ID</th><th>Логин</th><th>Роль</th><th>Действия</th></tr></thead>
+    <tbody id="usersList"></tbody>
+</table>
+<form id="addUserForm">
+    <input type="text" id="newUsername" placeholder="Логин" required>
+    <input type="password" id="newPassword" placeholder="Пароль" required>
+    <select id="newRole">
+        <option value="client">Клиент</option>
+        <option value="student">Студент</option>
+        <option value="curator">Куратор</option>
+    </select>
+    <button type="submit">Добавить</button>
+</form>
+<script src="script.js"></script>
+</body>
+</html>
