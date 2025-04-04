@@ -2,32 +2,19 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Справка - Legal Clinic CRM</title>
-    <link rel="stylesheet" href="styles.css">
+    <?php require_once 'includes/functions.php'; ?>
+    <meta name="csrf-token" content="<?php echo generate_csrf_token(); ?>">
+    <title>Помощь</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<nav>
-    <ul>
-        <li><a href="index.html">Главная</a></li>
-        <li><a href="profile.html">Личный кабинет</a></li>
-        <li><a href="history.html">История</a></li>
-        <li><a href="tasks.html">Задачи</a></li>
-        <li><a href="reports.html">Отчеты</a></li>
-        <li><a href="admin.html">Панель администратора</a></li>
-        <li><a href="settings.html">Настройки</a></li>
-        <li><a href="register.html">Регистрация</a></li>
-        <li><a href="contact.html">Обратная связь</a></li>
-        <li><a href="help.html">Справка</a></li>
-        <li><a href="dashboard.html">Дашборд</a></li>
-        <li><a href="logout.php">Выход</a></li>
-    </ul>
-</nav>
-<div class="breadcrumbs"><a href="index.html">Главная</a> > <span>Справка</span></div>
-<h1>Справка по системе</h1>
-<p>Система «Legal Clinic CRM» предназначена для внедрения системы электронного документооборота в юридической клинике ЧОУ ВО «Московский университет имени С.Ю. Витте». Она позволяет автоматизировать обработку документов, управление задачами и взаимодействие между клиентами, студентами и кураторами.</p>
-<h2>Инструкция по загрузке документа</h2>
-<p>1. Войдите в систему через страницу авторизации (login.html).</p>
-<p>2. На главной странице (index.html) нажмите кнопку «Выбрать файл» и выберите документ в формате .png или .jpg.</p>
-<p>3. Дождитесь завершения обработки и просмотрите результат в разделе «История».</p>
+<div class="container mt-5">
+    <h2>Помощь</h2>
+    <p>Руководство по использованию Legal Clinic CRM.</p>
+</div>
+<script src="js/core.js" type="module"></script>
+<script src="js/auth.js" type="module"></script>
+<script src="js/documents.js" type="module"></script>
+<script src="js/main.js" type="module"></script>
 </body>
 </html>
