@@ -77,6 +77,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode(['success' => false, 'message' => 'Задача не найдена или не принадлежит вам']);
     }
     $stmt->close();
+} elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $id = $_GET['id'] ?? '';
+    if (empty($id)) {
+        die(json_encode(['success' => false, 'message' => 'ID задачи обязателен']));
+    }
+
+    $stmt = $conn->prepare("DELETE FROM tasks WHERE id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $id, $_SESSION['user_id']);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['success' => true, 'message' => 'Задача удалена']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Задача не найдена или не принадлежит вам']);
+    }
+    $stmt->close();
 }
 $conn->close();
 ?>
