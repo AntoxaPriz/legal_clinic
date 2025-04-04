@@ -18,7 +18,12 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $stmt = $conn->prepare("SELECT id, description, status, responsible_id FROM tasks WHERE user_id = ?");
+    $stmt = $conn->prepare("
+    SELECT t.id, t.description, t.status, u.username AS responsible 
+    FROM tasks t 
+    LEFT JOIN users u ON t.responsible_id = u.id 
+    WHERE t.user_id = ?
+  ");
     $stmt->bind_param("i", $_SESSION['user_id']);
     $stmt->execute();
     $result = $stmt->get_result();
