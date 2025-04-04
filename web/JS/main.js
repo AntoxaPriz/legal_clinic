@@ -4,7 +4,7 @@ import { loadDocuments } from './documents.js';
 import { loadTasks, addTask, editTask } from './tasks.js';
 import { loadClients, addClient, editClient } from './clients.js';
 import { loadProfile, updateProfile, logout } from './profile.js';
-import { loadUsers } from './admin.js'; // Добавлено
+import { loadUsers, addUser, editUser, deleteUser } from './admin.js'; // Обновлено
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Legal Clinic CRM frontend loaded');
@@ -43,4 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const usersList = document.getElementById('usersList');
     if (usersList) loadUsers();
+    const addUserForm = document.getElementById('addUserForm');
+    if (addUserForm) addUserForm.addEventListener('submit', addUser);
+    const editUserForm = document.getElementById('editUserForm');
+    if (editUserForm) editUserForm.addEventListener('submit', editUser);
 });
