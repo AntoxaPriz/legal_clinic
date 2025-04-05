@@ -3,7 +3,7 @@ import { api } from './core.js';
 
 export async function loadUsers() {
     try {
-        const data = await api.request('admin.php?users=1');
+        const data = await api.cachedRequest('admin.php?users=1', 'GET', null, 'usersCache');
         const tableBody = document.querySelector('#usersList tbody');
         if (!tableBody) return;
 
@@ -67,6 +67,7 @@ export async function addUser(e) {
 
         if (data.success) {
             form.reset();
+            localStorage.removeItem('usersCache'); // Очистка кэша
             await loadUsers();
             alert(data.message || 'Пользователь успешно добавлен');
         }
@@ -103,6 +104,7 @@ export async function editUser(e) {
         if (data.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
             modal.hide();
+            localStorage.removeItem('usersCache'); // Очистка кэша
             await loadUsers();
             alert(data.message || 'Пользователь успешно обновлён');
         }
@@ -121,6 +123,7 @@ export async function deleteUser(userId) {
     try {
         const data = await api.request(`admin.php?id=${userId}`, 'DELETE');
         if (data.success) {
+            localStorage.removeItem('usersCache'); // Очистка кэша
             await loadUsers();
             alert(data.message || 'Пользователь успешно удалён');
         }

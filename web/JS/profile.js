@@ -6,17 +6,10 @@ export async function loadProfile() {
         const data = await api.request('profile.php');
         const profileInfo = document.getElementById('profileInfo');
         if (!profileInfo) return;
-
         profileInfo.innerHTML = `
       <p><strong>Имя пользователя:</strong> ${data.username}</p>
       <p><strong>Роль:</strong> ${data.role}</p>
     `;
-
-        const form = document.getElementById('updateProfileForm');
-        if (form) {
-            form.username.value = data.username;
-            form.password.value = '';
-        }
     } catch (error) {
         console.error('Profile load error:', error);
         alert('Ошибка загрузки профиля');
@@ -28,30 +21,24 @@ export async function updateProfile(e) {
     const form = e.target;
     const button = form.querySelector('button[type="submit"]');
 
-    const newPassword = form.password.value.trim();
-    if (newPassword && newPassword.length < 6) {
-        alert('Новый пароль должен содержать минимум 6 символов');
-        return;
-    }
-
     try {
         button.disabled = true;
         button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Сохранение...';
 
         const data = await api.request('profile.php', 'PUT', {
             username: form.username.value.trim(),
-            password: newPassword || null,
+            password: form.password.value.trim() || null,
             oldPassword: form.oldPassword.value.trim()
         });
 
         if (data.success) {
             await loadProfile();
+            alert(data.message || 'Профиль успешно обновлён');
             form.password.value = '';
             form.oldPassword.value = '';
-            alert(data.message || 'Профиль успешно обновлён');
         }
     } catch (error) {
-        console.error('Profile update error:', error);
+        console.error('Update profile error:', error);
         alert(error.message || 'Ошибка обновления профиля');
     } finally {
         button.disabled = false;
@@ -61,12 +48,13 @@ export async function updateProfile(e) {
 
 export async function logout() {
     try {
-        const data = await api.request('auth.php?logout=1', 'POST');
+        const data = await api.request('logout.php', 'POST');
         if (data.success) {
-            window.location.href = 'index.html'; // Перенаправление на главную страницу
+            localStorage.removeItem('userRole'); // Очистка роли из localStorage
+            window.location.href = 'login.html';
         }
     } catch (error) {
         console.error('Logout error:', error);
-        alert('Ошибка при выходе из системы');
+        alert('Ошибка при выходе');
     }
 }

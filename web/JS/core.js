@@ -1,81 +1,36 @@
 // web/js/core.js
-class APIClient {
-    constructor() {
-        this.socket = null;
-        this.socketListeners = new Map();
-        this.config = {
-            apiBaseUrl: '/api/', // Пустая строка, так как PHP-файлы в корне web/
-            wsUrl: `wss://${window.location.host}/ws`,
-            csrfToken: document.querySelector('meta[name="csrf-token"]')?.content || ''
-        };
-    }
-
-    async request(endpoint, method = 'GET', data = null) {
-        const url = `${this.config.apiBaseUrl}${endpoint}`;
+export const api = {
+    async request(endpoint, method = 'GET', body = null) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
         const options = {
             method,
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-Token': this.config.csrfToken,
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            credentials: 'include'
+                'X-CSRF-TOKEN': csrfToken
+            }
         };
+        if (body) options.body = JSON.stringify(body);
 
-        if (data && method !== 'GET') {
-            options.body = JSON.stringify(data);
+        const response = await fetch(`api/${endpoint}`, options);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
+    },
+
+    // Новая функция для кэширования
+    async cachedRequest(endpoint, method = 'GET', body = null, cacheKey, ttl = 3600000) { // 1 час TTL
+        const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
+        const now = Date.now();
+
+        if (cache.data && cache.timestamp && (now - cache.timestamp < ttl)) {
+            return cache.data; // Возвращаем кэшированные данные
         }
 
-        const response = await fetch(url, options);
-        const responseData = await response.json();
-
-        if (!response.ok) {
-            throw new Error(responseData.message || `HTTP error! status: ${response.status}`);
-        }
-
-        return responseData;
+        const data = await this.request(endpoint, method, body);
+        localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: now }));
+        return data;
     }
+};
 
-    connectWebSocket() {
-        if (this.socket) return;
-
-        this.socket = new WebSocket(this.config.wsUrl);
-
-        this.socket.onopen = () => {
-            console.log('WebSocket connected');
-            this.socket.send(JSON.stringify({
-                type: 'auth',
-                token: localStorage.getItem('token')
-            }));
-        };
-
-        this.socket.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            const listeners = this.socketListeners.get(message.type) || [];
-            listeners.forEach(callback => callback(message.data));
-        };
-
-        this.socket.onclose = () => {
-            console.log('WebSocket disconnected');
-            setTimeout(() => this.connectWebSocket(), 5000);
-        };
-    }
-
-    subscribe(eventType, callback) {
-        if (!this.socketListeners.has(eventType)) {
-            this.socketListeners.set(eventType, []);
-        }
-        this.socketListeners.get(eventType).push(callback);
-        return () => this.unsubscribe(eventType, callback);
-    }
-
-    unsubscribe(eventType, callback) {
-        const listeners = this.socketListeners.get(eventType);
-        if (listeners) {
-            this.socketListeners.set(eventType,
-                listeners.filter(listener => listener !== callback));
-        }
-    }
+export function clearCache() {
+    localStorage.clear(); // Очистка всего кэша (можно уточнить по ключам)
 }
-
-export const api = new APIClient();

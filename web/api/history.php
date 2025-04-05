@@ -18,7 +18,7 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $stmt = $conn->prepare("SELECT action, timestamp FROM history WHERE user_id = ? ORDER BY timestamp DESC");
+    $stmt = $conn->prepare("SELECT id, action, timestamp FROM history WHERE user_id = ? ORDER BY timestamp DESC");
     $stmt->bind_param("i", $_SESSION['user_id']);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -28,6 +28,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     echo json_encode($history);
     $stmt->close();
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    $action = $input['action'] ?? '';
+
+    if (empty($action)) {
+        die(json_encode(['success' => false, 'message' => 'Действие обязательно']));
+    }
+
+    $stmt = $conn->prepare("INSERT INTO history (user_id, action, timestamp) VALUES (?, ?, NOW())");
+    $stmt->bind_param("is", $_SESSION['user_id'], $action);
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        echo json_encode(['success' => true, 'message' => 'Запись добавлена']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Ошибка добавления записи']));
+  }
+    $stmt->close();
 }
+
 $conn->close();
 ?>

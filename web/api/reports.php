@@ -18,13 +18,17 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Пример отчета: количество задач и документов
-    $stmt = $conn->prepare("SELECT (SELECT COUNT(*) FROM tasks WHERE user_id = ?) as tasks_count, (SELECT COUNT(*) FROM documents WHERE user_id = ?) as docs_count");
-    $stmt->bind_param("ii", $_SESSION['user_id'], $_SESSION['user_id']);
+    $stmt = $conn->prepare("
+    SELECT 
+      (SELECT COUNT(*) FROM tasks WHERE user_id = ?) AS tasks_count,
+      (SELECT COUNT(*) FROM cases WHERE user_id = ?) AS cases_count,
+      (SELECT COUNT(*) FROM clients WHERE user_id = ?) AS clients_count
+  ");
+    $stmt->bind_param("iii", $_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id']);
     $stmt->execute();
     $result = $stmt->get_result();
     $report = $result->fetch_assoc();
-    echo json_encode($report ?: []);
+    echo json_encode($report);
     $stmt->close();
 }
 $conn->close();

@@ -3,7 +3,7 @@ import { api } from './core.js';
 
 export async function loadClients() {
     try {
-        const data = await api.request('clients.php');
+        const data = await api.cachedRequest('clients.php', 'GET', null, 'clientsCache');
         const tableBody = document.querySelector('#clientsList tbody');
         if (!tableBody) return;
 
@@ -13,8 +13,7 @@ export async function loadClients() {
             row.innerHTML = `
         <td>${client.id}</td>
         <td>${client.name}</td>
-        <td>${client.email || '-'}</td>
-        <td>${client.phone || '-'}</td>
+        <td>${client.contact}</td>
         <td>
           <button class="btn btn-primary btn-sm edit-client" data-id="${client.id}">Редактировать</button>
           <button class="btn btn-danger btn-sm delete-client" data-id="${client.id}">Удалить</button>
@@ -25,16 +24,15 @@ export async function loadClients() {
                 const form = document.getElementById('editClientForm');
                 form.id.value = client.id;
                 form.name.value = client.name;
-                form.email.value = client.email || '';
-                form.phone.value = client.phone || '';
+                form.contact.value = client.contact;
                 modal.show();
             });
             row.querySelector('.delete-client').addEventListener('click', () => deleteClient(client.id));
             tableBody.appendChild(row);
         });
     } catch (error) {
-        console.error('Clients error:', error);
-        alert('Ошибка загрузки списка клиентов');
+        console.error('Clients load error:', error);
+        alert('Ошибка загрузки клиентов');
     }
 }
 
@@ -49,12 +47,12 @@ export async function addClient(e) {
 
         const data = await api.request('clients.php', 'POST', {
             name: form.name.value.trim(),
-            email: form.email.value.trim() || null,
-            phone: form.phone.value.trim() || null
+            contact: form.contact.value.trim()
         });
 
         if (data.success) {
             form.reset();
+            localStorage.removeItem('clientsCache'); // Очистка кэша
             await loadClients();
             alert(data.message || 'Клиент успешно добавлен');
         }
@@ -64,21 +62,6 @@ export async function addClient(e) {
     } finally {
         button.disabled = false;
         button.textContent = 'Добавить клиента';
-    }
-}
-
-export async function deleteClient(clientId) {
-    if (!confirm('Вы уверены, что хотите удалить этого клиента?')) return;
-
-    try {
-        const data = await api.request(`clients.php?id=${clientId}`, 'DELETE');
-        if (data.success) {
-            await loadClients();
-            alert(data.message || 'Клиент успешно удалён');
-        }
-    } catch (error) {
-        console.error('Delete client error:', error);
-        alert(error.message || 'Ошибка удаления клиента');
     }
 }
 
@@ -93,13 +76,13 @@ export async function editClient(e) {
 
         const data = await api.request(`clients.php?id=${form.id.value}`, 'PUT', {
             name: form.name.value.trim(),
-            email: form.email.value.trim() || null,
-            phone: form.phone.value.trim() || null
+            contact: form.contact.value.trim()
         });
 
         if (data.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('editClientModal'));
             modal.hide();
+            localStorage.removeItem('clientsCache'); // Очистка кэша
             await loadClients();
             alert(data.message || 'Клиент успешно обновлён');
         }
@@ -109,5 +92,21 @@ export async function editClient(e) {
     } finally {
         button.disabled = false;
         button.textContent = 'Сохранить';
+    }
+}
+
+async function deleteClient(clientId) {
+    if (!confirm('Вы уверены, что хотите удалить этого клиента?')) return;
+
+    try {
+        const data = await api.request(`clients.php?id=${clientId}`, 'DELETE');
+        if (data.success) {
+            localStorage.removeItem('clientsCache'); // Очистка кэша
+            await loadClients();
+            alert(data.message || 'Клиент успешно удалён');
+        }
+    } catch (error) {
+        console.error('Delete client error:', error);
+        alert(error.message || 'Ошибка удаления клиента');
     }
 }
