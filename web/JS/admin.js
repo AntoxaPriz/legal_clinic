@@ -37,10 +37,23 @@ export async function loadUsers() {
     }
 }
 
+function validatePassword(password) {
+    const minLength = 8;
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    return password.length >= minLength && hasLetter && hasNumber;
+}
+
 export async function addUser(e) {
     e.preventDefault();
     const form = e.target;
     const button = form.querySelector('button[type="submit"]');
+    const password = form.password.value.trim();
+
+    if (!validatePassword(password)) {
+        alert('Пароль должен быть минимум 8 символов, содержать буквы и цифры');
+        return;
+    }
 
     try {
         button.disabled = true;
@@ -48,7 +61,7 @@ export async function addUser(e) {
 
         const data = await api.request('admin.php', 'POST', {
             username: form.username.value.trim(),
-            password: form.password.value.trim(),
+            password: password,
             role: form.role.value
         });
 
@@ -70,6 +83,12 @@ export async function editUser(e) {
     e.preventDefault();
     const form = e.target;
     const button = form.querySelector('button[type="submit"]');
+    const password = form.password.value.trim();
+
+    if (password && !validatePassword(password)) {
+        alert('Новый пароль должен быть минимум 8 символов, содержать буквы и цифры');
+        return;
+    }
 
     try {
         button.disabled = true;
@@ -77,7 +96,7 @@ export async function editUser(e) {
 
         const data = await api.request(`admin.php?id=${form.id.value}`, 'PUT', {
             username: form.username.value.trim(),
-            password: form.password.value.trim() || null,
+            password: password || null,
             role: form.role.value
         });
 

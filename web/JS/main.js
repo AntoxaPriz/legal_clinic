@@ -4,10 +4,26 @@ import { loadDocuments } from './documents.js';
 import { loadTasks, addTask, editTask } from './tasks.js';
 import { loadClients, addClient, editClient } from './clients.js';
 import { loadProfile, updateProfile, logout } from './profile.js';
-import { loadUsers, addUser, editUser, deleteUser } from './admin.js'; // Обновлено
+import { loadUsers, addUser, editUser, deleteUser } from './admin.js';
+import { initNav } from './nav.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('Legal Clinic CRM frontend loaded');
+
+    // Проверяем роль в localStorage, если нет — загружаем из профиля
+    let role = localStorage.getItem('userRole') || 'user';
+    if (!localStorage.getItem('userRole')) {
+        try {
+            const profileData = await (await fetch('api/profile.php', {
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+            })).json();
+            role = profileData.role || 'user';
+            localStorage.setItem('userRole', role); // Сохраняем роль в localStorage
+        } catch (error) {
+            console.error('Failed to fetch role:', error);
+        }
+    }
+    initNav(role); // Инициализация навигации с ролью
 
     const loginForm = document.getElementById('loginForm');
     if (loginForm) loginForm.addEventListener('submit', handleLogin);
