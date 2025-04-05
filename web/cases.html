@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="<?php echo generate_csrf_token(); ?>">
     <title>Дела</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -20,21 +21,71 @@
     </div>
 </nav>
 <div class="container mt-5">
-    <h2>Дела</h2>
+    <h2>Список дел</h2>
+    <form id="addCaseForm" class="mb-4">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="caseTitle" class="form-label">Название дела</label>
+                <input type="text" class="form-control" id="caseTitle" name="title" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="caseStatus" class="form-label">Статус</label>
+                <select class="form-control" id="caseStatus" name="status">
+                    <option value="open">Открыто</option>
+                    <option value="in_progress">В процессе</option>
+                    <option value="closed">Закрыто</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить дело</button>
+    </form>
     <table class="table" id="casesList">
         <thead>
         <tr>
             <th>ID</th>
-            <th>Название дела</th>
+            <th>Название</th>
             <th>Статус</th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody></tbody>
     </table>
+    <div class="modal fade" id="editCaseModal" tabindex="-1" aria-labelledby="editCaseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editCaseModalLabel">Редактировать дело</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editCaseForm">
+                    <div class="modal-body">
+                        <input type="hidden" name="id">
+                        <div class="mb-3">
+                            <label for="editCaseTitle" class="form-label">Название дела</label>
+                            <input type="text" class="form-control" id="editCaseTitle" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCaseStatus" class="form-label">Статус</label>
+                            <select class="form-control" id="editCaseStatus" name="status">
+                                <option value="open">Открыто</option>
+                                <option value="in_progress">В процессе</option>
+                                <option value="closed">Закрыто</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/core.js" type="module"></script>
 <script src="js/auth.js" type="module"></script>
+<script src="js/cases.js" type="module"></script>
 <script src="js/nav.js" type="module"></script>
 <script src="js/main.js" type="module"></script>
 </body>
