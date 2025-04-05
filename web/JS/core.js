@@ -1,36 +1,37 @@
 // web/js/core.js
 export const api = {
-    async request(endpoint, method = 'GET', body = null) {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-        const options = {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            }
+    async request(url, method = 'GET', data = null) {
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         };
-        if (body) options.body = JSON.stringify(body);
+        const options = { method, headers };
+        if (data) options.body = JSON.stringify(data);
 
-        const response = await fetch(`api/${endpoint}`, options);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-    },
+        const response = await fetch(`api/${url}`, options);
+        const result = await response.json();
 
-    // Новая функция для кэширования
-    async cachedRequest(endpoint, method = 'GET', body = null, cacheKey, ttl = 3600000) { // 1 час TTL
-        const cache = JSON.parse(localStorage.getItem(cacheKey) || '{}');
-        const now = Date.now();
-
-        if (cache.data && cache.timestamp && (now - cache.timestamp < ttl)) {
-            return cache.data; // Возвращаем кэшированные данные
+        if (!navigator.onLine && !response.ok) {
+            // Очередь для оффлайн-режима
+            await navigator.serviceWorker.ready;
+            navigator.serviceWorker.controller.postMessage({ type: 'queue', url, method, data });
+            if ('SyncManager' in window) {
+                await navigator.serviceWorker.ready.then(reg => reg.sync.register('sync-queued-requests'));
+            }
+            return { success: true, queued: true, message: 'Действие сохранено и будет выполнено при подключении' };
         }
 
-        const data = await this.request(endpoint, method, body);
-        localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: now }));
-        return data;
+        if (!response.ok) throw new Error(result.message || 'Ошибка запроса');
+        return result;
+    },
+
+    async cachedRequest(url, method = 'GET', data = null, cacheKey) {
+        if (navigator.onLine) {
+            const response = await this.request(url, method, data);
+            localStorage.setItem(cacheKey, JSON.stringify(response));
+            return response;
+        }
+        const cached = localStorage.getItem(cacheKey);
+        return cached ? JSON.parse(cached) : [];
     }
 };
-
-export function clearCache() {
-    localStorage.clear(); // Очистка всего кэша (можно уточнить по ключам)
-}

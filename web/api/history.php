@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if ($stmt->affected_rows > 0) {
         echo json_encode(['success' => true, 'message' => 'Запись добавлена']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Ошибка добавления записи']));
+        echo json_encode(['success' => false, 'message' => 'Ошибка добавления записи']);
   }
     $stmt->close();
 }

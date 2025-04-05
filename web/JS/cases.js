@@ -2,11 +2,13 @@
 import { api } from './core.js';
 
 export async function loadCases() {
+    const tableBody = document.querySelector('#casesList tbody');
+    if (!tableBody) return;
+
+    tableBody.innerHTML = '<tr><td colspan="4" class="text-center"><span class="spinner-border spinner-border-sm"></span> Загрузка...</td></tr>';
+
     try {
         const data = await api.cachedRequest('cases.php', 'GET', null, 'casesCache');
-        const tableBody = document.querySelector('#casesList tbody');
-        if (!tableBody) return;
-
         tableBody.innerHTML = '';
         data.forEach(caseItem => {
             const row = document.createElement('tr');
@@ -32,7 +34,7 @@ export async function loadCases() {
         });
     } catch (error) {
         console.error('Cases load error:', error);
-        alert('Ошибка загрузки дел');
+        tableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Ошибка загрузки дел</td></tr>';
     }
 }
 
@@ -40,20 +42,28 @@ export async function addCase(e) {
     e.preventDefault();
     const form = e.target;
     const button = form.querySelector('button[type="submit"]');
+    const title = form.title.value.trim();
+
+    if (!title) {
+        alert('Название дела не может быть пустым');
+        return;
+    }
 
     try {
         button.disabled = true;
         button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Добавление...';
 
         const data = await api.request('cases.php', 'POST', {
-            title: form.title.value.trim(),
+            title,
             status: form.status.value
         });
 
         if (data.success) {
             form.reset();
-            localStorage.removeItem('casesCache'); // Очистка кэша после добавления
+            localStorage.removeItem('casesCache');
             await loadCases();
+            const { addHistoryEntry } = await import('./dist/history.bundle.js');
+            await addHistoryEntry(`Добавлено дело: ${title}`);
             alert(data.message || 'Дело успешно добавлено');
         }
     } catch (error) {
@@ -69,21 +79,29 @@ export async function editCase(e) {
     e.preventDefault();
     const form = e.target;
     const button = form.querySelector('button[type="submit"]');
+    const title = form.title.value.trim();
+
+    if (!title) {
+        alert('Название дела не может быть пустым');
+        return;
+    }
 
     try {
         button.disabled = true;
         button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Сохранение...';
 
         const data = await api.request(`cases.php?id=${form.id.value}`, 'PUT', {
-            title: form.title.value.trim(),
+            title,
             status: form.status.value
         });
 
         if (data.success) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('editCaseModal'));
             modal.hide();
-            localStorage.removeItem('casesCache'); // Очистка кэша после редактирования
+            localStorage.removeItem('casesCache');
             await loadCases();
+            const { addHistoryEntry } = await import('./dist/history.bundle.js');
+            await addHistoryEntry(`Отредактировано дело: ${title}`);
             alert(data.message || 'Дело успешно обновлено');
         }
     } catch (error) {
@@ -101,8 +119,10 @@ export async function deleteCase(caseId) {
     try {
         const data = await api.request(`cases.php?id=${caseId}`, 'DELETE');
         if (data.success) {
-            localStorage.removeItem('casesCache'); // Очистка кэша после удаления
+            localStorage.removeItem('casesCache');
             await loadCases();
+            const { addHistoryEntry } = await import('./dist/history.bundle.js');
+            await addHistoryEntry(`Удалено дело с ID: ${caseId}`);
             alert(data.message || 'Дело успешно удалено');
         }
     } catch (error) {
